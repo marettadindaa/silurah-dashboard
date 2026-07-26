@@ -938,18 +938,18 @@ with tab_beranda:
         st.dataframe(nakes_df, use_container_width=True, hide_index=True)
 
 # --------------------------------------------------------------------------
-# TAB 2 — PETA DIGITAL (UPDATE: FULL AREA WILAYAH HIJAU)
+# TAB 2 — PETA DIGITAL (UPDATE: PETA DIGITAL + PETA TEMATIK KKN)
 # --------------------------------------------------------------------------
 with tab_peta:
     st.markdown(
         f"""
         <div class="section" style="margin-top:2.2rem;">
-            <div class="section-eyebrow">{tr("Peta Wilayah", "Regional Map")}</div>
-            <div class="section-title">{tr("Peta Digital Desa Silurah", "Digital Map of Silurah Village")}</div>
+            <div class="section-eyebrow">{tr("Peta Wilayah & Tematik", "Regional & Thematic Maps")}</div>
+            <div class="section-title">{tr("Pemetaan Spasial & Tematik Desa Silurah", "Spatial & Thematic Mapping of Silurah Village")}</div>
             <p class="section-body">
                 {tr(
-                    "Pemetaan batas wilayah administratif dan cakupan area Desa Silurah secara spasial berbasis poligon digital.",
-                    "Spatial mapping of administrative boundaries and coverage area of Silurah Village based on digital polygons."
+                    "Jelajahi pemetaan wilayah administratif berbasis poligon digital interaktif, serta peta tematik hasil observasi lapangan Tim KKN mengenai persebaran fasilitas, lokasi RT/RW, hingga kondisi hidrologi curah hujan desa.",
+                    "Explore interactive digital polygon-based administrative mapping, as well as thematic maps from KKN team field observations regarding facility distribution, RT/RW locations, and village rainfall hydrology."
                 )}
             </p>
         </div>
@@ -957,109 +957,116 @@ with tab_peta:
         unsafe_allow_html=True,
     )
 
+    # --- PENGATUR PILIHAN PETA (SUB-MENU) ---
     st.markdown('<div class="section" style="margin-top:0;">', unsafe_allow_html=True)
+    
+    pilihan_peta = st.radio(
+        label="Pilih Jenis Peta:",
+        options=[
+            tr("Peta Digital Interaktif (Poligon)", "Interactive Digital Map (Polygon)"),
+            tr("Peta Pemetaan RT/RW & Lokasi (ADM)", "RT/RW Mapping & Location Map (ADM)"),
+            tr("Peta Sebaran Curah Hujan", "Rainfall Distribution Map")
+        ],
+        horizontal=True,
+        key="selector_peta_tematik"
+    )
+    
     with st.container(border=True):
-        st.markdown(f'<div class="panel-title">{tr("Cakupan Wilayah Desa Silurah", "Silurah Village Area Coverage")}</div>', unsafe_allow_html=True)
-        
-        # 1. Data Poligon Wilayah Desa Silurah (Presisi mengikuti kontur batas daerah)
-        area_silurah = [
-            {
-                "nama": tr("Wilayah Desa Silurah", "Silurah Village Area"),
-                "luas": "140,09 Ha",
-                "keterangan": tr("Kec. Wonotunggal, Kab. Batang", "Wonotunggal District, Batang Regency"),
-                "polygon": [
-                    # Barat Laut (Dekat area SDN Silurah 01 & aliran sungai barat)
-                    [109.7550, -7.0730],
-                    [109.7580, -7.0700],
-                    [109.7620, -7.0680],
-                    [109.7660, -7.0675],
-                    # Utara - Timur Laut (Batas atas menuju Sedawung)
-                    [109.7710, -7.0680],
-                    [109.7760, -7.0700],
-                    [109.7800, -7.0730],
-                    [109.7815, -7.0770],
-                    # Timur - Tenggara (Melingkupi Sedawung View & alur bukit timur)
-                    [109.7810, -7.0820],
-                    [109.7820, -7.0870],
-                    [109.7810, -7.0920],
-                    [109.7815, -7.0980],
-                    [109.7805, -7.1030],
-                    [109.7790, -7.1080],
-                    [109.7810, -7.1120],
-                    # Selatan - Tenggara (Batas bawah di bawah Gunung Kobar)
-                    [109.7780, -7.1170],
-                    [109.7750, -7.1210],
-                    [109.7700, -7.1230],
-                    [109.7640, -7.1235],
-                    # Selatan - Barat Daya
-                    [109.7580, -7.1220],
-                    [109.7520, -7.1200],
-                    [109.7480, -7.1170],
-                    # Barat - Barat Daya (Garis bukit sebelah barat Gunung Kobar)
-                    [109.7450, -7.1120],
-                    [109.7435, -7.1060],
-                    [109.7440, -7.1000],
-                    [109.7460, -7.0940],
-                    [109.7485, -7.0880],
-                    # Barat (Melengkung naik ke arah utara)
-                    [109.7510, -7.0840],
-                    [109.7525, -7.0800],
-                    [109.7515, -7.0760],
-                    # Menutup kembali ke titik awal
-                    [109.7550, -7.0730]
-                ]
-            }
-        ]
-        
-        df_area = pd.DataFrame(area_silurah)
-        
-        # 2. Layer Poligon Area Hijau Full
-        layer_area = pdk.Layer(
-            "PolygonLayer",
-            data=df_area,
-            get_polygon="polygon",
-            filled=True,
-            stroked=True,
-            # Warna hijau transparan yang elegan (44, 76, 59 dengan alpha 165)
-            get_fill_color=[44, 76, 59, 165],
-            # Garis batas warna hijau pastel menyala agar kontras seperti garis putus-putus
-            get_line_color=[163, 201, 178, 255],
-            get_line_width=30,
-            pickable=True,
-            auto_highlight=True,
-        )
-        
-        # 3. Setting Kamera / Titik Tengah Peta
-        view_state_peta = pdk.ViewState(
-            latitude=-7.0950,
-            longitude=109.7620, # Disesuaikan sedikit ke tengah kontur baru
-            zoom=13.4,
-            pitch=30, # Sedikit dimiringkan agar lekukan poligon kelihatan hidup
-        )
-        
-        # 4. Render Peta ke Layar
-        r_peta = pdk.Deck(
-            layers=[layer_area],
-            initial_view_state=view_state_peta,
-            tooltip={"text": "{nama}\nLuas: {luas}\n{keterangan}"},
-        )
-        
-        st.pydeck_chart(r_peta, use_container_width=True)
+        # 1. JIKA PILIH PETA DIGITAL POLIGON
+        if "Poligon" in pilihan_peta or "Polygon" in pilihan_peta:
+            st.markdown(f'<div class="panel-title">{tr("Cakupan Wilayah Desa Silurah (3D Polygon)", "Silurah Village Area Coverage (3D Polygon)")}</div>', unsafe_allow_html=True)
+            
+            area_silurah = [
+                {
+                    "nama": tr("Wilayah Desa Silurah", "Silurah Village Area"),
+                    "luas": "140,09 Ha",
+                    "keterangan": tr("Kec. Wonotunggal, Kab. Batang", "Wonotunggal District, Batang Regency"),
+                    "polygon": [
+                        [109.7550, -7.0730], [109.7580, -7.0700], [109.7620, -7.0680], [109.7660, -7.0675],
+                        [109.7710, -7.0680], [109.7760, -7.0700], [109.7800, -7.0730], [109.7815, -7.0770],
+                        [109.7810, -7.0820], [109.7820, -7.0870], [109.7810, -7.0920], [109.7815, -7.0980],
+                        [109.7805, -7.1030], [109.7790, -7.1080], [109.7810, -7.1120], [109.7780, -7.1170],
+                        [109.7750, -7.1210], [109.7700, -7.1230], [109.7640, -7.1235], [109.7580, -7.1220],
+                        [109.7520, -7.1200], [109.7480, -7.1170], [109.7450, -7.1120], [109.7435, -7.1060],
+                        [109.7440, -7.1000], [109.7460, -7.0940], [109.7485, -7.0880], [109.7510, -7.0840],
+                        [109.7525, -7.0800], [109.7515, -7.0760], [109.7550, -7.0730]
+                    ]
+                }
+            ]
+            
+            df_area = pd.DataFrame(area_silurah)
+            layer_area = pdk.Layer(
+                "PolygonLayer",
+                data=df_area,
+                get_polygon="polygon",
+                filled=True,
+                stroked=True,
+                get_fill_color=[44, 76, 59, 165],
+                get_line_color=[163, 201, 178, 255],
+                get_line_width=30,
+                pickable=True,
+                auto_highlight=True,
+            )
+            view_state_peta = pdk.ViewState(latitude=-7.0950, longitude=109.7620, zoom=13.4, pitch=30)
+            r_peta = pdk.Deck(layers=[layer_area], initial_view_state=view_state_peta, tooltip={"text": "{nama}\nLuas: {luas}\n{keterangan}"})
+            st.pydeck_chart(r_peta, use_container_width=True)
+
+        # 2. JIKA PILIH PETA RT/RW & LOKASI
+        elif "RT/RW" in pilihan_peta:
+            st.markdown(f'<div class="panel-title">{tr("Peta Lokasi & Pemetaan Rumah RT/RW Desa Silurah", "Location Map & RT/RW Housing Mapping of Silurah Village")}</div>', unsafe_allow_html=True)
+            
+            # Ganti nama file di bawah ini sesuai nama asli di folder assets kamu jika berbeda
+            path_adm = ASSETS_DIR / "Peta Yardan.jpg" 
+            if not path_adm.exists():
+                path_adm = ASSETS_DIR / "Peta Yardan.jpg" # Fallback barangkali extensionnya cuma 1
+                
+            if path_adm.exists():
+                st.image(str(path_adm), use_container_width=True)
+            else:
+                st.warning(tr("File peta ADM belum ditemukan di folder assets.", "ADM map file not found in assets folder."))
+                
+            st.markdown(
+                f'<div style="margin-top: 10px; line-height: 1.6; font-size: 0.9rem; color: #663300; text-align: justify;">'
+                f'{tr("Peta administrasi ini mendokumentasikan sebaran jalur jalan desa, aliran sungai, serta titik-titik lokasi rumah Ketua RT (1-11) dan Ketua RW (1-5) yang tersebar di wilayah Desa Silurah, dilengkapi dengan dokumentasi visual kondisi bangunan warga.", "This administrative map documents the distribution of village roads, river flows, and location points of RT (1-11) and RW (1-5) heads scattered across Silurah Village, complete with visual documentation of citizens building conditions.")}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+        # 3. JIKA PILIH PETA CURAH HUJAN
+        else:
+            st.markdown(f'<div class="panel-title">{tr("Peta Sebaran Curah Hujan Bulan Juni 2026", "Rainfall Distribution Map - June 2026")}</div>', unsafe_allow_html=True)
+            
+            # Ganti nama file di bawah ini sesuai nama asli di folder assets kamu
+            path_hujan = ASSETS_DIR / "Peta Pier.jpg"
+            
+            if path_hujan.exists():
+                st.image(str(path_hujan), use_container_width=True)
+            else:
+                st.warning(tr("File peta curah hujan belum ditemukan di folder assets.", "Rainfall map file not found in assets folder."))
+                
+            st.markdown(
+                f'<div style="margin-top: 10px; line-height: 1.6; font-size: 0.9rem; color: #663300; text-align: justify;">'
+                f'{tr("Peta hidrologi hasil analisis spasial Tim 2 KKN Undip ini memvisualisasikan gradasi curah hujan di wilayah Desa Silurah pada bulan Juni 2026. Bagian selatan desa cenderung memiliki intensitas presipitasi yang lebih tinggi dibandingkan wilayah utara.", "This hydrological map from spatial analysis by KKN Undip Team 2 visualizes rainfall gradients in Silurah Village in June 2026. The southern part of the village tends to experience higher precipitation intensity compared to the northern region.")}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+            
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # --- BAGIAN LEGENDA & GRAFIK LAHAN ---
     st.markdown('<div class="section" style="margin-top:1.5rem;">', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            st.markdown(f'<div class="panel-title">{tr("Legenda Peta", "Map Legend")}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="panel-title">{tr("Informasi Pemetaan", "Mapping Information")}</div>', unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div style="display: flex; align-items: center; margin-top: 10px;">
                     <div style="width: 28px; height: 18px; background-color: rgba(44, 76, 59, 0.85); border: 2px solid #A3C9B2; border-radius: 4px; margin-right: 12px;"></div>
-                    <span style="font-weight: 600; color: #FFFFFF;">{tr("Cakupan Wilayah Desa Silurah (140,09 Ha)", "Silurah Village Area Coverage (140.09 Ha)")}</span>
+                    <span style="font-weight: 600; color: #365E46;">{tr("Cakupan Wilayah & Zonasi", "Area Coverage & Zoning")}</span>
                 </div>
-                <p style="font-size: 0.85rem; color: #365E46; margin-top: 12px; line-height: 1.5;">
-                    {tr("*Area hijau menunjukkan estimasi batas zonasi administrasi Desa Silurah yang mencakup enam dusun utama.", "*The green area indicates the estimated administrative zoning boundary of Silurah Village covering six main hamlets.")}
+                <p style="font-size: 0.85rem; color: #365E46; margin-top: 12px; line-height: 1.6;">
+                    {tr("Data pemetaan spasial dan tematik diperoleh melalui survei lapangan, analisis sistem informasi geografis (GIS), serta kolaborasi program KKN Reguler Tim II Universitas Diponegoro tahun 2026 bersama pemerintah Desa Silurah.", "Spatial and thematic mapping data were obtained through field surveys, geographic information system (GIS) analysis, and collaboration of the 2026 Diponegoro University Regular KKN Team II program with the Silurah Village government.")}
                 </p>
                 """,
                 unsafe_allow_html=True
@@ -1426,7 +1433,7 @@ with tab_statistik:
         with st.container(border=True):
             st.markdown(f'<div class="panel-title">{tr("Grafik Prevalensi Penyakit", "Disease Prevalence Chart")}</div>', unsafe_allow_html=True)
             
-            bars_health = alt.Chart(health_df).mark_bar(color="#A3C9B2", cornerRadiusEnd=4).encode(
+            bars_health = alt.Chart(health_df).mark_bar(color="#365E46", cornerRadiusEnd=4).encode(
                 x=alt.X(f'{col_kasus}:Q', title=col_kasus),
                 y=alt.Y(f'{col_penyakit}:N', sort='-x', title=None), # Diurutkan otomatis dari kasus terbanyak
                 tooltip=[col_penyakit, col_kasus]
