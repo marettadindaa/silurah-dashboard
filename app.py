@@ -235,49 +235,80 @@ st.markdown(
         font-weight:700;
     }
 
-    .stTabs [data-baseweb="tab-list"]{
-        gap:6px;
-        background:var(--card-bg);
-        padding:0.6rem 2.5rem 0rem 2.5rem;
-        border-bottom:1px solid var(--border-soft);
-        position:sticky;
-        top:0;
-        z-index:9999 !important;
+    /* ---------- Tabs Navigasi (Modern Floating Pill Style) ---------- */
+    /* 1. Hilangkan garis panjang di bawah tab & reset kontainer list */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 12px !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-bottom: none !important;
+        padding: 0 !important;
+        margin-bottom: 25px !important;
     }
 
-    .stTabs [data-baseweb="tab"]{
-        height:46px;
-        white-space:pre-wrap;
-        border-radius:8px 8px 0 0;
-        padding:0px 20px;
-        font-family:'Plus Jakarta Sans', sans-serif;
-        font-weight:600;
-        font-size:0.95rem;
-        color:var(--text-muted);
-        background:transparent;
-        border:none;
-        transition:all 0.2s ease;
-        cursor:pointer !important;
-        pointer-events: auto !important;
+    /* 2. BUNUH garis warna (highlight bar & border) bawaan Streamlit yang bikin kaku */
+    .stTabs [data-baseweb="tab-highlight"],
+    .stTabs [data-baseweb="tab-border"] {
+        display: none !important;
+        width: 0px !important;
+        height: 0px !important;
+        background: transparent !important;
     }
 
-    .stTabs [data-baseweb="tab"]:hover{
-        color:var(--primary);
-        background:rgba(44,76,59,0.06);
+    /* 3. Bentuk tombol tab menjadi Kapsul Lonjong Mulus (Rounded Pill) */
+    .stTabs [data-baseweb="tab"] {
+        height: 42px !important;
+        background-color: #FFFFFF !important; /* Latar putih bersih saat tidak aktif */
+        border: 1px solid rgba(44, 76, 59, 0.18) !important;
+        border-radius: 50px !important; /* <--- Kunci mutlak biar melengkung, gak kotak */
+        padding: 0px 24px !important;
+        outline: none !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        cursor: pointer !important;
     }
 
-    .stTabs [aria-selected="true"]{
-        color:var(--primary) !important;
-        background:rgba(44,76,59,0.08) !important;
-        border-bottom:3px solid var(--primary) !important;
+    /* 4. Paksa warna teks agar TIDAK BIRU (Target ke seluruh elemen teks di dalamnya) */
+    .stTabs [data-baseweb="tab"] *, 
+    .stTabs [data-baseweb="tab"] p, 
+    .stTabs [data-baseweb="tab"] span {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        color: #5C655E !important; /* Warna hijau abu estetik, bukan biru */
+        text-decoration: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    .stTabs [data-baseweb="tab-highlight"]{
-        background-color:var(--primary);
+    /* 5. Efek melayang halus saat mouse geser ke atas tab (Hover) */
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: rgba(44, 76, 59, 0.08) !important;
+        transform: translateY(-2px) !important;
+        border-color: #2C4C3B !important;
+        box-shadow: 0 6px 12px rgba(44, 76, 59, 0.1) !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover * {
+        color: #2C4C3B !important;
     }
 
-    .stTabs [data-baseweb="tab-panel"]{
-        padding-top:0rem;
+    /* 6. TAB AKTIF (Sedang Dipilih) - Hijau elegan mulus tanpa garis/kotak abu-abu */
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        background: linear-gradient(135deg, #2C4C3B 0%, #3E5C48 100%) !important;
+        border: 1px solid #2C4C3B !important;
+        border-radius: 50px !important;
+        box-shadow: 0 6px 18px rgba(44, 76, 59, 0.28) !important;
+        transform: translateY(-2px) !important;
+    }
+    .stTabs [data-baseweb="tab"][aria-selected="true"] * {
+        color: #FFFFFF !important; /* Teks otomatis jadi putih bersih */
+    }
+
+    /* 7. Hilangkan efek fokus/garis kotak saat tombol diklik */
+    .stTabs [data-baseweb="tab"]:focus,
+    .stTabs [data-baseweb="tab"]:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
     }
 
     .hero-anchor{height:0;}
@@ -558,15 +589,16 @@ with tab_beranda:
     st.markdown('<div class="hero-anchor"></div>', unsafe_allow_html=True)
 
     st.markdown(
-        """
+        f"""
         <div class="hero-banner">
             <div class="hero-overlay"></div>
             <div class="hero-content">
                 <div class="hero-eyebrow">Kecamatan Wonotunggal · Kabupaten Batang</div>
                 <h1>Desa Silurah</h1>
-                <p>Peta digital dan basis data desa untuk mendukung perencanaan
-                pembangunan berkelanjutan, selaras dengan SDG 11 — Kota dan
-                Permukiman yang Berkelanjutan.</p>
+                <p>{tr(
+                    "Peta digital dan basis data desa untuk mendukung perencanaan pembangunan berkelanjutan, selaras dengan SDG 11 — Kota dan Permukiman yang Berkelanjutan.",
+                    "Digital map and village database to support sustainable development planning, aligned with SDG 11 — Sustainable Cities and Communities."
+                )}</p>
             </div>
         </div>
         """,
@@ -906,7 +938,7 @@ with tab_beranda:
         st.dataframe(nakes_df, use_container_width=True, hide_index=True)
 
 # --------------------------------------------------------------------------
-# TAB 2 — PETA DIGITAL
+# TAB 2 — PETA DIGITAL (UPDATE: FULL AREA WILAYAH HIJAU)
 # --------------------------------------------------------------------------
 with tab_peta:
     st.markdown(
@@ -916,8 +948,8 @@ with tab_peta:
             <div class="section-title">{tr("Peta Digital Desa Silurah", "Digital Map of Silurah Village")}</div>
             <p class="section-body">
                 {tr(
-                    "Sekilas pandang peta persebaran fasilitas umum dan zonasi lahan Desa Silurah berdasarkan data spasial terbaru.",
-                    "An overview of the distribution map of public facilities and land zoning in Silurah Village based on the latest spatial data."
+                    "Pemetaan batas wilayah administratif dan cakupan area Desa Silurah secara spasial berbasis poligon digital.",
+                    "Spatial mapping of administrative boundaries and coverage area of Silurah Village based on digital polygons."
                 )}
             </p>
         </div>
@@ -927,35 +959,121 @@ with tab_peta:
 
     st.markdown('<div class="section" style="margin-top:0;">', unsafe_allow_html=True)
     with st.container(border=True):
-        st.markdown(f'<div class="panel-title">{tr("Sebaran Titik Fasilitas", "Facility Point Distribution")}</div>', unsafe_allow_html=True)
-        st.map(MAP_POINTS, size=40, color="#2C4C3B")
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f'<div class="panel-title">{tr("Cakupan Wilayah Desa Silurah", "Silurah Village Area Coverage")}</div>', unsafe_allow_html=True)
+        
+        # 1. Data Poligon Wilayah Desa Silurah (Presisi mengikuti kontur batas daerah)
+        area_silurah = [
+            {
+                "nama": tr("Wilayah Desa Silurah", "Silurah Village Area"),
+                "luas": "140,09 Ha",
+                "keterangan": tr("Kec. Wonotunggal, Kab. Batang", "Wonotunggal District, Batang Regency"),
+                "polygon": [
+                    # Barat Laut (Dekat area SDN Silurah 01 & aliran sungai barat)
+                    [109.7550, -7.0730],
+                    [109.7580, -7.0700],
+                    [109.7620, -7.0680],
+                    [109.7660, -7.0675],
+                    # Utara - Timur Laut (Batas atas menuju Sedawung)
+                    [109.7710, -7.0680],
+                    [109.7760, -7.0700],
+                    [109.7800, -7.0730],
+                    [109.7815, -7.0770],
+                    # Timur - Tenggara (Melingkupi Sedawung View & alur bukit timur)
+                    [109.7810, -7.0820],
+                    [109.7820, -7.0870],
+                    [109.7810, -7.0920],
+                    [109.7815, -7.0980],
+                    [109.7805, -7.1030],
+                    [109.7790, -7.1080],
+                    [109.7810, -7.1120],
+                    # Selatan - Tenggara (Batas bawah di bawah Gunung Kobar)
+                    [109.7780, -7.1170],
+                    [109.7750, -7.1210],
+                    [109.7700, -7.1230],
+                    [109.7640, -7.1235],
+                    # Selatan - Barat Daya
+                    [109.7580, -7.1220],
+                    [109.7520, -7.1200],
+                    [109.7480, -7.1170],
+                    # Barat - Barat Daya (Garis bukit sebelah barat Gunung Kobar)
+                    [109.7450, -7.1120],
+                    [109.7435, -7.1060],
+                    [109.7440, -7.1000],
+                    [109.7460, -7.0940],
+                    [109.7485, -7.0880],
+                    # Barat (Melengkung naik ke arah utara)
+                    [109.7510, -7.0840],
+                    [109.7525, -7.0800],
+                    [109.7515, -7.0760],
+                    # Menutup kembali ke titik awal
+                    [109.7550, -7.0730]
+                ]
+            }
+        ]
+        
+        df_area = pd.DataFrame(area_silurah)
+        
+        # 2. Layer Poligon Area Hijau Full
+        layer_area = pdk.Layer(
+            "PolygonLayer",
+            data=df_area,
+            get_polygon="polygon",
+            filled=True,
+            stroked=True,
+            # Warna hijau transparan yang elegan (44, 76, 59 dengan alpha 165)
+            get_fill_color=[44, 76, 59, 165],
+            # Garis batas warna hijau pastel menyala agar kontras seperti garis putus-putus
+            get_line_color=[163, 201, 178, 255],
+            get_line_width=30,
+            pickable=True,
+            auto_highlight=True,
+        )
+        
+        # 3. Setting Kamera / Titik Tengah Peta
+        view_state_peta = pdk.ViewState(
+            latitude=-7.0950,
+            longitude=109.7620, # Disesuaikan sedikit ke tengah kontur baru
+            zoom=13.4,
+            pitch=30, # Sedikit dimiringkan agar lekukan poligon kelihatan hidup
+        )
+        
+        # 4. Render Peta ke Layar
+        r_peta = pdk.Deck(
+            layers=[layer_area],
+            initial_view_state=view_state_peta,
+            tooltip={"text": "{nama}\nLuas: {luas}\n{keterangan}"},
+        )
+        
+        st.pydeck_chart(r_peta, use_container_width=True)
 
+    # --- BAGIAN LEGENDA & GRAFIK LAHAN ---
     st.markdown('<div class="section" style="margin-top:1.5rem;">', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            st.markdown(f'<div class="panel-title">{tr("Legenda Kategori", "Category Legend")}</div>', unsafe_allow_html=True)
-            legend_items = [
-                ("🏞️", tr("Destinasi Wisata", "Tourist Destinations")),
-                ("🏫", tr("Sekolah", "Schools")),
-                ("🩺", tr("Posyandu", "Healthcare Centers")),
-                ("🕌", tr("Fasilitas Ibadah", "Worship Facilities")),
-            ]
-            for icon, label in legend_items:
-                st.markdown(f"**{icon} {label}**")
+            st.markdown(f'<div class="panel-title">{tr("Legenda Peta", "Map Legend")}</div>', unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div style="display: flex; align-items: center; margin-top: 10px;">
+                    <div style="width: 28px; height: 18px; background-color: rgba(44, 76, 59, 0.85); border: 2px solid #A3C9B2; border-radius: 4px; margin-right: 12px;"></div>
+                    <span style="font-weight: 600; color: #FFFFFF;">{tr("Cakupan Wilayah Desa Silurah (140,09 Ha)", "Silurah Village Area Coverage (140.09 Ha)")}</span>
+                </div>
+                <p style="font-size: 0.85rem; color: #365E46; margin-top: 12px; line-height: 1.5;">
+                    {tr("*Area hijau menunjukkan estimasi batas zonasi administrasi Desa Silurah yang mencakup enam dusun utama.", "*The green area indicates the estimated administrative zoning boundary of Silurah Village covering six main hamlets.")}
+                </p>
+                """,
+                unsafe_allow_html=True
+            )
     with col2:
         with st.container(border=True):
             st.markdown(f'<div class="panel-title">{tr("Penggunaan Lahan (Ha)", "Land Use (Ha)")}</div>', unsafe_allow_html=True)
             
             chart_data = LAND_USE_DATA.reset_index()
-            
             col_lahan = tr("Penggunaan Lahan", "Land Use")
             col_luas = tr("Luas (Ha)", "Area (Ha)")
-            
             chart_data.columns = [col_lahan, col_luas]
             
-            bars = alt.Chart(chart_data).mark_bar(color="#2C4C3B", cornerRadiusEnd=4).encode(
+            bars = alt.Chart(chart_data).mark_bar(color="#365E46", cornerRadiusEnd=4).encode(
                 x=alt.X(f'{col_luas}:Q', scale=alt.Scale(type='sqrt'), title=col_luas),
                 y=alt.Y(f'{col_lahan}:N', sort='-x', title=None),
                 tooltip=[col_lahan, col_luas]
@@ -965,13 +1083,14 @@ with tab_peta:
                 align='left',
                 baseline='middle',
                 dx=3,
-                color='#4A3525',
+                color='#FFFFFF',
                 fontWeight='bold'
             ).encode(
                 text=f'{col_luas}:Q'
             )
             
             st.altair_chart(bars + text, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------
 # TAB 3 — WISATA (Layout Baru: Kiri Foto+Deskripsi, Kanan Maps)
@@ -1082,13 +1201,176 @@ with tab_wisata:
 # --------------------------------------------------------------------------
 with tab_statistik:
     st.markdown(
-        """
+        f"""
+        <style>
+        /* Desain Kartu Kependudukan Modern (Anti-Kaku & Anti-Kepotong) */
+        .demo-card {{
+            background: linear-gradient(135deg, rgba(44, 76, 59, 0.35) 0%, rgba(20, 28, 24, 0.85) 100%);
+            border: 1px solid rgba(163, 201, 178, 0.3);
+            border-radius: 18px;
+            padding: 1.5rem 1.2rem;
+            text-align: left;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }}
+        
+        .demo-card:hover {{
+            transform: translateY(-5px);
+            border-color: rgba(163, 201, 178, 0.8);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(135deg, rgba(62, 92, 72, 0.45) 0%, rgba(30, 40, 35, 0.95) 100%);
+        }}
+
+        /* Teks Kiri: Label & Angka */
+        .demo-content {{
+            z-index: 2;
+        }}
+
+        .demo-label {{
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #A3C9B2;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }}
+
+        .demo-val {{
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            white-space: nowrap; /* Mencegah teks kepotong jadi titik-titik */
+        }}
+
+        /* Ikon Besar di Kanan Kartu */
+        .demo-icon {{
+            font-size: 2.6rem;
+            opacity: 0.8;
+            transition: transform 0.3s ease;
+        }}
+
+        .demo-card:hover .demo-icon {{
+            transform: scale(1.15) rotate(8deg);
+            opacity: 1;
+        }}
+        </style>
+
         <div class="section" style="margin-top:2.2rem;">
-            <div class="section-eyebrow">Data & Demografi</div>
-            <div class="section-title">Profil Kependudukan</div>
+            <div class="section-eyebrow">{tr("Data & Demografi", "Data & Demographics")}</div>
+            <div class="section-title">{tr("Profil Kependudukan", "Population Profile")}</div>
             <p class="section-body">
-                Ringkasan data demografi Desa Silurah berdasarkan dusun dan
-                kelompok usia (data dummy untuk keperluan demonstrasi tampilan).
+                {tr(
+                    "Ringkasan data demografi Desa Silurah berdasarkan dusun dan kelompok usia.",
+                    "Summary of Silurah Village demographic data by hamlet and age group."
+                )}
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # --- KARTU KEPENDUDUKAN (GAYA STAT-CARD BERANDA) ---
+    st.markdown(
+        """
+        <style>
+        .stat-card-custom {
+            background: #FFFFFF;
+            border-top: 5px solid #2C4C3B;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            padding: 1.8rem 1rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+            border-top: 5px solid #4A3525;
+        }
+
+        /* Ikon di Bagian Atas */
+        .stat-icon-custom {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Angka Utama yang Jelas dan Tidak Terpotong */
+        .stat-val-custom {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4A3525;
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+            white-space: nowrap; /* Mencegah angka terpotong menjadi ... */
+        }
+
+        /* Label Keterangan di Bawah */
+        .stat-label-custom {
+            font-size: 0.9rem;
+            color: #6B6459;
+            font-weight: 600;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown('<div class="section" style="margin-top:0;">', unsafe_allow_html=True)
+    m1, m2, m3, m4 = st.columns(4)
+    
+    demo_metrics = [
+        {"val": "1.950", "label": tr("Total Penduduk", "Total Population")},
+        {"val": "633", "label": tr("Kepala Keluarga", "Heads of Family")},
+        {"val": "140,09 Ha", "label": tr("Luas Wilayah", "Area Size")},
+        {"val": "105,26", "label": tr("Rasio Gender", "Gender Ratio")},
+    ]
+    
+    for col, data in zip([m1, m2, m3, m4], demo_metrics):
+        with col:
+            st.markdown(
+                f"""
+                <div class="stat-card-custom">
+                    <div class="stat-val-custom">{data['val']}</div>
+                    <div class="stat-label-custom">{data['label']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # =========================================================================
+    # SECTION BARU: STATISTIK KESEHATAN 2026
+    # =========================================================================
+    st.markdown(
+        f"""
+        <div class="section" style="margin-top:3.5rem;">
+            <div class="section-eyebrow">{tr("Kesehatan Warga", "Citizen Health")}</div>
+            <div class="section-title">{tr("Statistik Penyakit Warga (Tahun 2026)", "Citizen Disease Statistics (2026)")}</div>
+            <p class="section-body">
+                {tr(
+                    "Perekaman data prevalensi penyakit masyarakat Desa Silurah pada tahun 2026 sebagai acuan peningkatan layanan kesehatan desa dan tindakan preventif Posyandu.",
+                    "Recording of disease prevalence data among Silurah Village citizens in 2026 as a reference for improving village healthcare services and Posyandu preventive measures."
+                )}
             </p>
         </div>
         """,
@@ -1096,27 +1378,70 @@ with tab_statistik:
     )
 
     st.markdown('<div class="section" style="margin-top:0;">', unsafe_allow_html=True)
-    m1, m2, m3, m4 = st.columns(4)
-    metrics = [
-        ("Total Penduduk", "1950", None),
-        ("Kepala Keluarga", "633", None),
-        ("Luas Wilayah", "140,09 Ha", None),
-        ("Rasio Gender", "105,26", None),
-    ]
-    for col, (label, value, delta) in zip([m1, m2, m3, m4], metrics):
-        with col:
-            with st.container(border=True):
-                st.metric(label, value, delta)
-    st.markdown("</div>", unsafe_allow_html=True)
+    col_tabel, col_grafik = st.columns([1, 1.3], gap="large")
 
-    st.markdown('<div class="section" style="margin-top:1.5rem;">', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
+    # Siapkan nama kolom dinamis
+    col_penyakit = tr("Jenis Penyakit", "Disease Type")
+    col_kasus = tr("Jumlah Kasus", "Number of Cases")
+
+    # DataFrame Kesehatan 2026 (Dwibahasa)
+    health_df = pd.DataFrame({
+        col_penyakit: [
+            tr("Penyakit Rhematik", "Rheumatic Disease"),
+            tr("ISPA (Saluran Pernapasan)", "ARI (Respiratory Infection)"),
+            tr("Hipertensi", "Hypertension"),
+            tr("TBC (Tuberkulosis)", "Tuberculosis (TB)"),
+            tr("Diabetes Melitus (DM)", "Diabetes Mellitus (DM)")
+        ],
+        col_kasus: [56, 15, 15, 2, 2]
+    })
+
+    # Bagian Kiri: Tabel Data
+    with col_tabel:
         with st.container(border=True):
-            st.markdown('<div class="panel-title">Penduduk per Dusun</div>', unsafe_allow_html=True)
-            st.bar_chart(POPULATION_DATA, color=["#2C4C3B", "#4A3525"])
-    with c2:
+            st.markdown(f'<div class="panel-title">{tr("Rekapitulasi Kasus", "Case Summary")}</div>', unsafe_allow_html=True)
+            st.dataframe(health_df, use_container_width=True, hide_index=True)
+            
+            # Info box khusus warna Hijau Earth Tone (Bukan Biru)
+            total_kasus = health_df[col_kasus].sum()
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: rgba(44, 76, 59, 0.15); 
+                    border: 1px solid rgba(163, 201, 178, 0.4); 
+                    border-radius: 8px; 
+                    padding: 12px 16px; 
+                    color: #663300; 
+                    font-size: 0.95rem; 
+                    margin-top: 10px;">
+                    <span style="color: #663300; font-weight: bold;">{tr('Total Terdata:', 'Total Recorded:')}</span> 
+                    <b>{total_kasus}</b> {tr('Kasus', 'Cases')} (2026)
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    # Bagian Kanan: Grafik Batang Horizontal Altair
+    with col_grafik:
         with st.container(border=True):
-            st.markdown('<div class="panel-title">Struktur Usia</div>', unsafe_allow_html=True)
-            st.bar_chart(AGE_DATA, color="#4A3525")
+            st.markdown(f'<div class="panel-title">{tr("Grafik Prevalensi Penyakit", "Disease Prevalence Chart")}</div>', unsafe_allow_html=True)
+            
+            bars_health = alt.Chart(health_df).mark_bar(color="#A3C9B2", cornerRadiusEnd=4).encode(
+                x=alt.X(f'{col_kasus}:Q', title=col_kasus),
+                y=alt.Y(f'{col_penyakit}:N', sort='-x', title=None), # Diurutkan otomatis dari kasus terbanyak
+                tooltip=[col_penyakit, col_kasus]
+            )
+            
+            text_health = bars_health.mark_text(
+                align='left',
+                baseline='middle',
+                dx=4,
+                color='#FFFFFF',
+                fontWeight='bold',
+                fontSize=13
+            ).encode(
+                text=f'{col_kasus}:Q'
+            )
+            
+            st.altair_chart(bars_health + text_health, use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
